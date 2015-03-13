@@ -14,7 +14,9 @@
 
     var uds = {},
         fetchCaseDetails,
-        fetchCaseComments;
+        fetchCaseComments,
+        fetchUserDetails,
+        fetchCases;
     var udsHostName = new Uri('http://unified-ds.gsslab.rdu2.redhat.com:9100');
 
     var baseAjaxParams = {
@@ -81,5 +83,49 @@
         $.ajax(fetchCaseComments);
     };
 
+    uds.fetchUserDetails = function (onSuccess, onFailure, ssoUsername) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+
+        //var url =udsHostName.clone().setPath('/user').setQuery('where=' +  "SSO is \"" + ssoUsername + "\"");
+        var url =udsHostName.clone().setPath('/user/')+ssoUsername;
+
+        fetchUserDetails = $.extend({}, baseAjaxParams, {
+            url: url,
+            success: function (response) {
+                if (response !== undefined) {
+                    onSuccess(response);
+                } else {
+                    onSuccess([]);
+                }
+            },
+            error: function (xhr, response, status) {
+                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
+            }
+        });
+        $.ajax(fetchUserDetails);
+    };
+
+    uds.fetchCases = function (onSuccess, onFailure, uql) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+
+        var url =udsHostName.clone().setPath('/case').addQueryParam('where', uql);
+
+        fetchCases = $.extend({}, baseAjaxParams, {
+            url: url,
+            success: function (response) {
+                if (response !== undefined) {
+                    onSuccess(response);
+                } else {
+                    onSuccess([]);
+                }
+            },
+            error: function (xhr, response, status) {
+                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
+            }
+        });
+        $.ajax(fetchCases);
+    };
     return uds;
 }));
