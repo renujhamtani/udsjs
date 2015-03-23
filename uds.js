@@ -19,6 +19,14 @@
         fetchCases;
     var udsHostName = new Uri('http://unified-ds.gsslab.rdu2.redhat.com:9100');
 
+    if (window.location.hostname !== 'access.redhat.com') {
+         var udsHostName = new Uri('http://unified-ds-qa.gsslab.pnq.redhat.com:9100/');
+    }
+
+    if(localStorage && localStorage.getItem('udsHostname')) {
+        portalHostname = localStorage.getItem('udsHostname');
+    }
+
     var baseAjaxParams = {
         accepts: {
             jsonp: 'application/json, text/json'
