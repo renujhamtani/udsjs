@@ -24,7 +24,7 @@
     }
 
     if(localStorage && localStorage.getItem('udsHostname')) {
-        portalHostname = localStorage.getItem('udsHostname');
+        udsHostName = localStorage.getItem('udsHostname');
     }
 
     var baseAjaxParams = {
