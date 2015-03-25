@@ -44,7 +44,6 @@
         dataType: 'json'
     };
 
-    uds.case = {};
     uds.fetchCaseDetails = function (onSuccess, onFailure, caseNumber) {
         //1332755
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
