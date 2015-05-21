@@ -35,7 +35,7 @@
         type: 'GET',
         method: 'GET',
         beforeSend: function(xhr) {
-            xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(unescape(encodeURIComponent('skesharigit' + ':' + 'Magarpatta13%'))))
+            xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(unescape(encodeURIComponent('<username>' + ':' + '<password>'))))
         },
         headers: {
             Accept: 'application/json, text/json'
