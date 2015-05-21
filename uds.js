@@ -48,9 +48,9 @@
     };
 
     //Function to wrap the UDS response into meaningful and easier iterable ascension objects
-    function mapResponseObject(kase,comment,entitlement,user,solution,response) {
+    function mapResponseObject(isCase,isComment,isEntitlement,isUser,isSolution,response) {
         // we will also have to check for undefined and null objects in response before assigning.
-        if(kase === true) {
+        if(isCase === true) {
             var kase = {};
             kase.case_number = response.resource.caseNumber;
             kase.status = response.resource.status;
@@ -67,16 +67,16 @@
             kase.last_modified_by = response.resource.createdBy.resource.fullName;
             kase.internal_priority = response.resource.internalPriority;        
             return kase;
-        } else if(comment === true) {
+        } else if(isComment === true) {
             var comments = {};
             return comments;
-        } else if(entitlement === true) {
+        } else if(isEntitlement === true) {
             var entitlement = {};
             return entitlement;
-        } else if(user === true) {
+        } else if(isUser === true) {
             var user = {};
             return user;
-        } else if(solution == true) {
+        } else if(isSolution == true) {
             var solutions = {};
             return solutions;
         }        
