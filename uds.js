@@ -19,9 +19,9 @@
         fetchCases;
     var udsHostName = new Uri('http://unified-ds.gsslab.rdu2.redhat.com:9100');
 
-    if (window.location.hostname !== 'access.redhat.com') {
-        udsHostName = new Uri('http://unified-ds-qa.gsslab.pnq.redhat.com:9100/');
-    }
+    //if (window.location.hostname !== 'access.redhat.com') {
+    //    udsHostName = new Uri('http://unified-ds-qa.gsslab.pnq.redhat.com:9100/');
+    //}
 
     if(localStorage && localStorage.getItem('udsHostname')) {
         udsHostName = localStorage.getItem('udsHostname');
@@ -34,6 +34,9 @@
         crossDomain: true,
         type: 'GET',
         method: 'GET',
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(unescape(encodeURIComponent('<username>' + ':' + '<password>'))))
+        },
         headers: {
             Accept: 'application/json, text/json'
         },
@@ -112,7 +115,27 @@
         });
         $.ajax(fetchUserDetails);
     };
+    uds.fetchUser = function (onSuccess, onFailure, userUql) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
 
+        var url =udsHostName.clone().setPath('/user').addQueryParam('where', userUql);
+
+        fetchCases = $.extend({}, baseAjaxParams, {
+            url: url,
+            success: function (response) {
+                if (response !== undefined) {
+                    onSuccess(response);
+                } else {
+                    onSuccess([]);
+                }
+            },
+            error: function (xhr, response, status) {
+                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
+            }
+        });
+        $.ajax(fetchCases);
+    };
     uds.fetchCases = function (onSuccess, onFailure, uql) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }

@@ -43,6 +43,13 @@ require(['uds'], function (uds) {
         onFailure,
         "rhn-support-rmanes"
     );
+    uds.fetchUser(
+        function (response) {
+            console.log(response);
+        },
+        onFailure,
+        "SSO is \"rhn-support-rmanes\""
+    );
     uds.fetchCases(
         //sample query for getting owned cases based on roles
         function (response) {
