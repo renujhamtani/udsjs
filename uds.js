@@ -47,6 +47,41 @@
         dataType: 'json'
     };
 
+    //Function to wrap the UDS response into meaningful and easier iterable ascension objects
+    function mapResponseObject(isCase,isComment,isEntitlement,isUser,isSolution,response) {
+        // we will also have to check for undefined and null objects in response before assigning.
+        if(isCase === true) {
+            var kase = {};
+            kase.case_number = response.resource.caseNumber;
+            kase.status = response.resource.status;
+            kase.summary = response.resource.subject;
+            kase.severity = response.resource.severity;
+            kase.product = response.resource.product.resource.line.resource.name;
+            if(response.resource.product.resource.version != undefined) {
+                kase.version = response.resource.product.resource.version.resource.name;
+            }        
+            kase.description = response.resource.description;
+            kase.sbr_group = '';
+            kase.type = '';
+            kase.created_by = response.resource.createdBy.resource.fullName;
+            kase.last_modified_by = response.resource.createdBy.resource.fullName;
+            kase.internal_priority = response.resource.internalPriority;        
+            return kase;
+        } else if(isComment === true) {
+            var comments = {};
+            return comments;
+        } else if(isEntitlement === true) {
+            var entitlement = {};
+            return entitlement;
+        } else if(isUser === true) {
+            var user = {};
+            return user;
+        } else if(isSolution == true) {
+            var solutions = {};
+            return solutions;
+        }        
+    };
+
     uds.fetchCaseDetails = function (onSuccess, onFailure, caseNumber) {
         //1332755
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
@@ -58,7 +93,7 @@
             url: url,
             success: function (response) {
                 if (response.resource !== undefined) {
-                    onSuccess(response);
+                    onSuccess(mapResponseObject(true,false,false,false,false,response));
                 } else {
                     onSuccess([]);
                 }
