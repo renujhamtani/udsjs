@@ -65,7 +65,11 @@
             kase.type = '';
             kase.created_by = response.resource.createdBy.resource.fullName;
             kase.last_modified_by = response.resource.createdBy.resource.fullName;
-            kase.internal_priority = response.resource.internalPriority;        
+            kase.internal_priority = response.resource.internalPriority;
+            kase.is_fts_case = response.resource.isFTSCase;
+            kase.account = {};
+            kase.account.is_strategic = response.resource.account.resource.strategic;
+            kase.account.special_handling_required = response.resource.account.resource.specialHandlingRequired;
             return kase;
         } else if(isComment === true) {
             var comments = {};
