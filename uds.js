@@ -19,9 +19,9 @@
         fetchCases;
     var udsHostName = new Uri('http://unified-ds.gsslab.rdu2.redhat.com:9100');
 
-    //if (window.location.hostname !== 'access.redhat.com') {
-    //    udsHostName = new Uri('http://unified-ds-qa.gsslab.pnq.redhat.com:9100/');
-    //}
+    if (window.location.hostname !== 'access.redhat.com') {
+        udsHostName = new Uri('http://unified-ds-qa.gsslab.brq.redhat.com:9100/');
+    }
 
     if(localStorage && localStorage.getItem('udsHostname')) {
         udsHostName = localStorage.getItem('udsHostname');
@@ -175,12 +175,21 @@
         });
         $.ajax(fetchCases);
     };
-    uds.fetchCases = function (onSuccess, onFailure, uql) {
+    uds.fetchCases = function (onSuccess, onFailure, uql,resourceProjection,limit) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
 
         var url =udsHostName.clone().setPath('/case').addQueryParam('where', uql);
-
+        if (resourceProjection != null) {
+            url.addQueryParam('resourceProjection', resourceProjection);
+        } else {
+            url.addQueryParam('resourceProjection', 'Minimal');
+        }
+        if (limit != null) {
+            url.addQueryParam('limit', limit);
+        } else {
+            url.addQueryParam('limit', 7);
+        }
         fetchCases = $.extend({}, baseAjaxParams, {
             url: url,
             success: function (response) {
