@@ -20,7 +20,7 @@
     var udsHostName = new Uri('http://unified-ds.gsslab.rdu2.redhat.com:9100');
 
     if (window.location.hostname !== 'access.redhat.com') {
-        udsHostName = new Uri('http://unified-ds-qa.gsslab.brq.redhat.com:9100/');
+        udsHostName = new Uri('https://unified-ds-qa.gsslab.brq.redhat.com/');
     }
 
     if(localStorage && localStorage.getItem('udsHostname')) {
@@ -35,13 +35,14 @@
         type: 'GET',
         method: 'GET',
         beforeSend: function(xhr) {
-            xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(unescape(encodeURIComponent('<username>' + ':' + '<password>'))))
+            xhr.setRequestHeader('X-Omit', 'WWW-Authenticate');
+            //xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(unescape(encodeURIComponent('<username>' + ':' + '<password>'))))
         },
         headers: {
             Accept: 'application/json, text/json'
         },
         xhrFields: {
-            withCredentials: false
+            withCredentials: true
         },
         data: {},
         dataType: 'json'
