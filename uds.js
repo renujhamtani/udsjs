@@ -34,13 +34,13 @@
         crossDomain: true,
         type: 'GET',
         method: 'GET',
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader('X-Omit', 'WWW-Authenticate');
-            //xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(unescape(encodeURIComponent('<username>' + ':' + '<password>'))))
-        },
-        headers: {
-            Accept: 'application/json, text/json'
-        },
+        //beforeSend: function(xhr) {
+        //    xhr.setRequestHeader('X-Omit', 'WWW-Authenticate');
+        //    //xhr.setRequestHeader('Authorization', 'Basic ' + window.btoa(unescape(encodeURIComponent('<username>' + ':' + '<password>'))))
+        //},
+        //headers: {
+        //    Accept: 'application/json, text/json'
+        //},
         xhrFields: {
             withCredentials: true
         },
