@@ -188,8 +188,6 @@
         }
         if (limit != null) {
             url.addQueryParam('limit', limit);
-        } else {
-            url.addQueryParam('limit', 7);
         }
         fetchCases = $.extend({}, baseAjaxParams, {
             url: url,
