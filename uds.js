@@ -16,6 +16,8 @@
         fetchCaseDetails,
         fetchCaseComments,
         fetchUserDetails,
+        fetchAccountDetails,
+        fetchAccountNotes,
         fetchCases;
     var udsHostName = new Uri('http://unified-ds.gsslab.rdu2.redhat.com:9100');
 
@@ -60,7 +62,7 @@
             kase.product = response.resource.product.resource.line.resource.name;
             if(response.resource.product.resource.version != undefined) {
                 kase.version = response.resource.product.resource.version.resource.name;
-            }        
+            }
             kase.description = response.resource.description;
             kase.sbr_group = '';
             kase.type = '';
@@ -69,8 +71,14 @@
             kase.internal_priority = response.resource.internalPriority;
             kase.is_fts_case = response.resource.isFTSCase;
             kase.account = {};
+            kase.account.account_number = response.resource.account.resource.accountNumber;
             kase.account.is_strategic = response.resource.account.resource.strategic;
             kase.account.special_handling_required = response.resource.account.resource.specialHandlingRequired;
+            kase.entitlement={};
+            kase.entitlement.name=response.resource.entitlement.resource.name;
+            kase.entitlement.service_level=response.resource.entitlement.resource.serviceLevel;
+            kase.sbt=response.resource.sbt;
+            kase.target_date_time=response.resource.targetDate;
             return kase;
         } else if(isComment === true) {
             var comments = {};
@@ -131,6 +139,55 @@
             }
         });
         $.ajax(fetchCaseComments);
+    };
+
+    uds.fetchAccountDetails = function (onSuccess, onFailure,accountNumber, resourceProjection) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+
+        var url =udsHostName.clone().setPath('/account/' + accountNumber)
+        if (resourceProjection != null) {
+            url.addQueryParam('resourceProjection', resourceProjection);
+        } else {
+            url.addQueryParam('resourceProjection', 'Minimal');
+        }
+
+        fetchAccountDetails = $.extend({}, baseAjaxParams, {
+            url: url,
+            success: function (response) {
+                if (response !== undefined) {
+                    onSuccess(response);
+                } else {
+                    onSuccess([]);
+                }
+            },
+            error: function (xhr, response, status) {
+                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
+            }
+        });
+        $.ajax(fetchAccountDetails);
+    };
+
+    uds.fetchAccountNotes = function (onSuccess, onFailure,accountNumber) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+
+        var url =udsHostName.clone().setPath('/account/' + accountNumber+'/notes')
+
+        fetchAccountNotes = $.extend({}, baseAjaxParams, {
+            url: url,
+            success: function (response) {
+                if (response !== undefined) {
+                    onSuccess(response);
+                } else {
+                    onSuccess([]);
+                }
+            },
+            error: function (xhr, response, status) {
+                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
+            }
+        });
+        $.ajax(fetchAccountNotes);
     };
 
     uds.fetchUserDetails = function (onSuccess, onFailure, ssoUsername) {
