@@ -65,6 +65,14 @@
             }
             kase.description = response.resource.description;
             kase.sbr_group = '';
+            if(response.resource.sbrs !== undefined && response.resource.sbrs.length > 0) {
+                for(var i = 0; i < response.resource.sbrs.length; i++) {
+                    kase.sbr_group = kase.sbr_group.concat(response.resource.sbrs[i]);
+                    if(i < (response.resource.sbrs.length-1)) {
+                        kase.sbr_group = kase.sbr_group.concat(' , ');
+                    }
+                }                
+            }
             kase.type = '';
             kase.created_by = response.resource.createdBy.resource.fullName;
             kase.last_modified_by = response.resource.createdBy.resource.fullName;
