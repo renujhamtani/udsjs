@@ -12,13 +12,8 @@
 }(this, function ($, Uri) {
     'use strict';
 
-    var uds = {},
-        fetchCaseDetails,
-        fetchCaseComments,
-        fetchUserDetails,
-        fetchAccountDetails,
-        fetchAccountNotes,
-        fetchCases;
+    var uds = {};
+
     var udsHostName = new Uri('http://unified-ds.gsslab.rdu2.redhat.com:9100');
 
     if (window.location.hostname !== 'access.redhat.com') {
@@ -50,196 +45,71 @@
         dataType: 'json'
     };
 
-    //Function to wrap the UDS response into meaningful and easier iterable ascension objects
-    function mapResponseObject(isCase,isComment,isEntitlement,isUser,isSolution,response) {
-        // we will also have to check for undefined and null objects in response before assigning.
-        if(isCase === true) {
-            var kase = {};
-            kase.case_number = response.resource.caseNumber;
-            kase.status = response.resource.status;
-            kase.summary = response.resource.subject;
-            kase.severity = response.resource.severity;
-            kase.product = response.resource.product.resource.line.resource.name;
-            if(response.resource.product.resource.version != undefined) {
-                kase.version = response.resource.product.resource.version.resource.name;
-            }
-            kase.description = response.resource.description;
-            kase.sbr_group = '';
-            if(response.resource.sbrs !== undefined && response.resource.sbrs.length > 0) {
-                for(var i = 0; i < response.resource.sbrs.length; i++) {
-                    kase.sbr_group = kase.sbr_group.concat(response.resource.sbrs[i]);
-                    if(i < (response.resource.sbrs.length-1)) {
-                        kase.sbr_group = kase.sbr_group.concat(' , ');
-                    }
-                }                
-            }
-            kase.type = '';
-            kase.created_by = response.resource.createdBy.resource.fullName;
-            kase.last_modified_by = response.resource.createdBy.resource.fullName;
-            kase.internal_priority = response.resource.internalPriority;
-            kase.is_fts_case = response.resource.isFTSCase;
-            kase.account = {};
-            kase.account.account_number = response.resource.account.resource.accountNumber;
-            kase.account.is_strategic = response.resource.account.resource.strategic;
-            kase.account.special_handling_required = response.resource.account.resource.specialHandlingRequired;
-            kase.entitlement={};
-            kase.entitlement.name=response.resource.entitlement.resource.name;
-            kase.entitlement.service_level=response.resource.entitlement.resource.serviceLevel;
-            kase.sbt=response.resource.sbt;
-            kase.target_date_time=response.resource.targetDate;
-            return kase;
-        } else if(isComment === true) {
-            var comments = {};
-            return comments;
-        } else if(isEntitlement === true) {
-            var entitlement = {};
-            return entitlement;
-        } else if(isUser === true) {
-            var user = {};
-            return user;
-        } else if(isSolution == true) {
-            var solutions = {};
-            return solutions;
-        }        
-    };
-
-    uds.fetchCaseDetails = function (onSuccess, onFailure, caseNumber) {
-        //1332755
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-
-        var url =udsHostName.clone().setPath('/case/' + caseNumber);
-
-        fetchCaseDetails = $.extend({}, baseAjaxParams, {
-            url: url,
-            success: function (response) {
-                if (response.resource !== undefined) {
-                    onSuccess(mapResponseObject(true,false,false,false,false,response));
-                } else {
-                    onSuccess([]);
-                }
-            },
-            error: function (xhr, response, status) {
-                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
+    var executeUdsAjaxCall=function(onSuccess,onFailure,url)
+    {
+        var defer = $.Deferred();
+        var promise=$.ajax($.extend({}, baseAjaxParams,{
+            url: url
+        }));
+        promise.done(function(response) {
+            if (response !== undefined) {
+                onSuccess(response);
+            } else {
+                onSuccess([]); //not sure whether every call would need the response to be typecasted to []
             }
         });
-        $.ajax(fetchCaseDetails);
+        promise.fail(function(xhr, response, status) {
+            onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);//not sure of this error for everything
+        });
+        return defer.promise;
+    };
+
+
+    uds.fetchCaseDetails = function (onSuccess, onFailure,caseNumber) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url =udsHostName.clone().setPath('/case/' + caseNumber);
+        return executeUdsAjaxCall(onSuccess,onFailure,url);
+
     };
 
     uds.fetchCaseComments = function (onSuccess, onFailure, caseNumber) {
-        //1332755
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-
         var url =udsHostName.clone().setPath('/case/' + caseNumber + "/comments");
-
-        fetchCaseComments = $.extend({}, baseAjaxParams, {
-            url: url,
-            success: function (response) {
-                if (response !== undefined) {
-                    onSuccess(response);
-                } else {
-                    onSuccess([]);
-                }
-            },
-            error: function (xhr, response, status) {
-                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
-            }
-        });
-        $.ajax(fetchCaseComments);
+        return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
 
     uds.fetchAccountDetails = function (onSuccess, onFailure,accountNumber, resourceProjection) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-
-        var url =udsHostName.clone().setPath('/account/' + accountNumber)
+        var url =udsHostName.clone().setPath('/account/' + accountNumber);
         if (resourceProjection != null) {
             url.addQueryParam('resourceProjection', resourceProjection);
         } else {
             url.addQueryParam('resourceProjection', 'Minimal');
         }
-
-        fetchAccountDetails = $.extend({}, baseAjaxParams, {
-            url: url,
-            success: function (response) {
-                if (response !== undefined) {
-                    onSuccess(response);
-                } else {
-                    onSuccess([]);
-                }
-            },
-            error: function (xhr, response, status) {
-                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
-            }
-        });
-        $.ajax(fetchAccountDetails);
+        return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
 
     uds.fetchAccountNotes = function (onSuccess, onFailure,accountNumber) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-
-        var url =udsHostName.clone().setPath('/account/' + accountNumber+'/notes')
-
-        fetchAccountNotes = $.extend({}, baseAjaxParams, {
-            url: url,
-            success: function (response) {
-                if (response !== undefined) {
-                    onSuccess(response);
-                } else {
-                    onSuccess([]);
-                }
-            },
-            error: function (xhr, response, status) {
-                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
-            }
-        });
-        $.ajax(fetchAccountNotes);
+        var url =udsHostName.clone().setPath('/account/' + accountNumber+'/notes');
+        return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
 
     uds.fetchUserDetails = function (onSuccess, onFailure, ssoUsername) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-
-        //var url =udsHostName.clone().setPath('/user').setQuery('where=' +  "SSO is \"" + ssoUsername + "\"");
         var url =udsHostName.clone().setPath('/user/')+ssoUsername;
-
-        fetchUserDetails = $.extend({}, baseAjaxParams, {
-            url: url,
-            success: function (response) {
-                if (response !== undefined) {
-                    onSuccess(response);
-                } else {
-                    onSuccess([]);
-                }
-            },
-            error: function (xhr, response, status) {
-                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
-            }
-        });
-        $.ajax(fetchUserDetails);
+        return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
     uds.fetchUser = function (onSuccess, onFailure, userUql) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-
         var url =udsHostName.clone().setPath('/user').addQueryParam('where', userUql);
-
-        fetchCases = $.extend({}, baseAjaxParams, {
-            url: url,
-            success: function (response) {
-                if (response !== undefined) {
-                    onSuccess(response);
-                } else {
-                    onSuccess([]);
-                }
-            },
-            error: function (xhr, response, status) {
-                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
-            }
-        });
-        $.ajax(fetchCases);
+        return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
     uds.fetchCases = function (onSuccess, onFailure, uql,resourceProjection,limit) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
@@ -254,20 +124,7 @@
         if (limit != null) {
             url.addQueryParam('limit', limit);
         }
-        fetchCases = $.extend({}, baseAjaxParams, {
-            url: url,
-            success: function (response) {
-                if (response !== undefined) {
-                    onSuccess(response);
-                } else {
-                    onSuccess([]);
-                }
-            },
-            error: function (xhr, response, status) {
-                onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
-            }
-        });
-        $.ajax(fetchCases);
+        return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
     return uds;
 }));
