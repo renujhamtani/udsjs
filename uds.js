@@ -126,5 +126,11 @@
         }
         return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
+    uds.fetchCaseHistory = function (onSuccess, onFailure, caseNumber) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/history");
+        return executeUdsAjaxCall(onSuccess,onFailure,url);
+    };
     return uds;
 }));
