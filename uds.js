@@ -150,6 +150,7 @@
         return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
 
+
     uds.postPublicComments = function (onSuccess, onFailure, caseNumber,caseComment) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
@@ -157,10 +158,22 @@
         return executeUdsAjaxCallWithData(onSuccess,onFailure,url,caseComment);
     };
     uds.postPrivateComments = function (onSuccess, onFailure, caseNumber,caseComment) {
+        if (!$.isFunction(onSuccess)) {
+            throw 'onSuccess callback must be a function';
+        }
+        if (!$.isFunction(onFailure)) {
+            throw 'onFailure callback must be a function';
+        }
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private");
+        return executeUdsAjaxCallWithData(onSuccess, onFailure, url, caseComment);
+    }
+
+    uds.fetchCaseHistory = function (onSuccess, onFailure, caseNumber) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private");
-        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,caseComment);
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/history");
+        return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
+    
     return uds;
 }));
