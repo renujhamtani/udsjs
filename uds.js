@@ -134,7 +134,7 @@
         var url =udsHostName.clone().setPath('/user').addQueryParam('where', userUql);
         return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
-    uds.fetchCases = function (onSuccess, onFailure, uql,resourceProjection,limit) {
+    uds.fetchCases = function (onSuccess, onFailure, uql,resourceProjection,limit,sortOption) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
 
@@ -146,6 +146,9 @@
         }
         if (limit != null) {
             url.addQueryParam('limit', limit);
+        }
+        if(sortOption != null){
+            url.addQueryParam('orderBy',sortOption);
         }
         return executeUdsAjaxCall(onSuccess,onFailure,url);
     };
