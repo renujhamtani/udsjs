@@ -72,9 +72,10 @@
         var promise=$.ajax($.extend({}, baseAjaxParams,{
             url: url,
             data: JSON.stringify(data),
-            contentType: "application/json; charset=utf-8",
+            contentType: 'application/json',
             type: 'POST',
-            method: 'POST'
+            method: 'POST',
+            dataType: ''
         }));
         promise.done(function(response) {
             if (response !== undefined) {
