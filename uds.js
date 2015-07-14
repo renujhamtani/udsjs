@@ -66,15 +66,15 @@
         return defer.promise;
     };
 
-    var executeUdsAjaxCallWithData=function(onSuccess,onFailure,url,data)
+    var executeUdsAjaxCallWithData=function(onSuccess,onFailure,url,data,httpMethod)
     {
         var defer = $.Deferred();
         var promise=$.ajax($.extend({}, baseAjaxParams,{
             url: url,
             data: JSON.stringify(data),
             contentType: 'application/json',
-            type: 'POST',
-            method: 'POST',
+            type: httpMethod,
+            method: httpMethod,
             dataType: ''
         }));
         promise.done(function(response) {
@@ -161,7 +161,7 @@
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
         var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public");
-        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,caseComment);
+        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,caseComment,'POST');
     };
     uds.postPrivateComments = function (onSuccess, onFailure, caseNumber,caseComment) {
         if (!$.isFunction(onSuccess)) {
@@ -171,8 +171,18 @@
             throw 'onFailure callback must be a function';
         }
         var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private");
-        return executeUdsAjaxCallWithData(onSuccess, onFailure, url, caseComment);
-    }
+        return executeUdsAjaxCallWithData(onSuccess, onFailure, url, caseComment,'POST');
+    };
+    uds.updateCaseDetails = function(onSuccess, onFailure, caseNumber,caseDetails){
+        if (!$.isFunction(onSuccess)) {
+            throw 'onSuccess callback must be a function';
+        }
+        if (!$.isFunction(onFailure)) {
+            throw 'onFailure callback must be a function';
+        }
+        var url = udsHostName.clone().setPath('/case/' + caseNumber);
+        return executeUdsAjaxCallWithData(onSuccess, onFailure, url, caseDetails,'PUT');
+    };
 
     uds.fetchCaseHistory = function (onSuccess, onFailure, caseNumber) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }

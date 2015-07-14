@@ -33,7 +33,7 @@ require(['uds'], function (uds) {
             console.log(response);
         },
         onFailure,
-        "1332755"
+        "01278378"
     );
 
     uds.fetchUserDetails(
@@ -56,6 +56,16 @@ require(['uds'], function (uds) {
             console.log(response);
         },
         onFailure,
-        '(((ownerId is "005A0000002a7XZIAY" and (status is "Waiting on Red Hat" or internalStatus is "Waiting on Owner")) or (ftsRole like "%rmanes%" and status ne "Closed")) or ((internalStatus is "Waiting on Collaboration" and (status ne "Closed" and (sbrGroup is "Kernel" or sbrGroup is "Networking"))) and nnoSuperRegion is null) or (isFTS is true and (ftsRole is "" and (sbrGroup is "Kernel" or sbrGroup is "Networking"))) and requiresSecureHandling is false)'
+        '((((((ownerId is "005A0000000gPRIIA2" and (status is "Waiting on Red Hat" or internalStatus is "Waiting on Owner")) or (ftsRole like "%strataapi2%" and status ne "Closed"))) or ((internalStatus is "Waiting on Collaboration" and (status ne "Closed")) and nnoSuperRegion is null)) or (isFTS is true and (ftsRole is ""))) and requiresSecureHandling is false)',
+        'Minimal',
+        6
     );
+    uds.updateCaseDetails(
+        function (response) {
+            console.log(response);
+        },
+        onFailure,
+        '01278378',
+        '{"resource":{"caseSummary":{"resource":{"summary":"test"}}}}'
+    )
 });
