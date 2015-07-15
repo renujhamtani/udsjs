@@ -1,6 +1,6 @@
 {
   "name": "udsjs",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Javascript library to interact with Unified Data Services",
   "main": "uds.js",
   "repository": {

@@ -152,14 +152,11 @@
         var url =udsHostName.clone().setPath('/user').addQueryParam('where', userUql);
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
-    uds.fetchCases = function (onSuccess, onFailure, uql, resourceProjection, limit, sortOption, statusOnly) {
+    uds.fetchCases = function (onSuccess, onFailure, uql,resourceProjection,limit,sortOption) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        var path = '/case'
-        if(onlyStatus){
-            path = '/case/list-status-only'
-        }
-        var url =udsHostName.clone().setPath(path).addQueryParam('where', uql);
+
+        var url =udsHostName.clone().setPath('/case').addQueryParam('where', uql);
         if (resourceProjection != null) {
             url.addQueryParam('resourceProjection', resourceProjection);
         } else {
