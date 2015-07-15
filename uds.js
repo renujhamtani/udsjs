@@ -42,7 +42,7 @@
             withCredentials: true
         },
         data: {},
-        dataType: 'json'
+        dataType: ''
     };
 
     var executeUdsAjaxCall=function(onSuccess,onFailure,url,httpMethod)
