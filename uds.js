@@ -156,6 +156,12 @@
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
 
+    uds.generateBomgarSessionKey=function(onSuccess, onFailure, caseId) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url =udsHostName.clone().setPath('/case/' + caseId + '/remote-session-key');
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
 
     uds.postPublicComments = function (onSuccess, onFailure, caseNumber,caseComment) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
