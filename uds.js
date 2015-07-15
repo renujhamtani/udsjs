@@ -156,7 +156,7 @@
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
         var path = '/case'
-        if(onlyStatus){
+        if(statusOnly){
             path = '/case/list-status-only'
         }
         var url =udsHostName.clone().setPath(path).addQueryParam('where', uql);
