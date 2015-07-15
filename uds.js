@@ -106,6 +106,21 @@
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
 
+    //hold the lock on the case
+    uds.getlock = function (onSuccess, onFailure, caseNumber) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url =udsHostName.clone().setPath('/case/' + caseNumber + "/lock");
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
+    //release the lock on the case
+    uds.releaselock = function (onSuccess, onFailure, caseNumber) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url =udsHostName.clone().setPath('/case/' + caseNumber + "/lock");
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'DELETE');
+    };
+
     uds.fetchAccountDetails = function (onSuccess, onFailure,accountNumber, resourceProjection) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
