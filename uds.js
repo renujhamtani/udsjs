@@ -14,9 +14,9 @@
 
     var uds = {};
 
-    var udsHostName = new Uri('http://unified-ds.gsslab.rdu2.redhat.com:9100');
+    var udsHostName = new Uri('https://unified-ds-qa.gsslab.pnq2.redhat.com/');
 
-    if (window.location.hostname !== 'access.redhat.com') {
+    if (window.location.hostname !== 'access.redhat.com' && window.location.hostname !== 'prod.foo.redhat.com') {
         udsHostName = new Uri('https://unified-ds-ci.gsslab.brq.redhat.com/');
     }
 
