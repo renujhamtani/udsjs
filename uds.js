@@ -159,7 +159,7 @@
         if(statusOnly){
             path = '/case/list-status-only'
         }
-        var url =udsHostName.clone().setPath(path).addQueryParam('where', uql);
+        var url =udsHostName.clone().setPath(path).addQueryParam('where', encodeURIComponent(uql));
         if (resourceProjection != null) {
             url.addQueryParam('resourceProjection', resourceProjection);
         } else {
