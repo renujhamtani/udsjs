@@ -67,5 +67,12 @@ require(['uds'], function (uds) {
         onFailure,
         '01278378',
         '{"resource":{"caseSummary":{"resource":{"summary":"test"}}}}'
+    );
+    uds.fetchCaseAssociateDetails(
+        function (response) {
+            console.log(response);
+        },
+        onFailure,
+        '005A0000005n18tIAA','Contributor'
     )
 });

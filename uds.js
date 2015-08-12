@@ -106,6 +106,13 @@
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
 
+    uds.fetchCaseAssociateDetails = function (onSuccess, onFailure, userId,roleName) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url =udsHostName.clone().setPath('/case/associates?where=roleName is "'+roleName+'" and userId is "'+userId+'"');
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
+
     //hold the lock on the case
     uds.getlock = function (onSuccess, onFailure, caseNumber) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
