@@ -221,6 +221,17 @@
         var url = udsHostName.clone().setPath('/case/' + caseNumber + "/history");
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
-    
+
+    uds.addAssociates = function (onSuccess, onFailure, caseId,jsonAssociates) {
+        if (!$.isFunction(onSuccess)) {
+            throw 'onSuccess callback must be a function';
+        }
+        if (!$.isFunction(onFailure)) {
+            throw 'onFailure callback must be a function';
+        }
+        var url = udsHostName.clone().setPath('/case/' + caseId + "/associate");
+        return executeUdsAjaxCallWithData(onSuccess, onFailure, url, jsonAssociates,'POST');
+    };
+
     return uds;
 }));
