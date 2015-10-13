@@ -204,6 +204,7 @@
         var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private");
         return executeUdsAjaxCallWithData(onSuccess, onFailure, url, caseComment,'POST');
     };
+
     uds.updateCaseDetails = function(onSuccess, onFailure, caseNumber,caseDetails){
         if (!$.isFunction(onSuccess)) {
             throw 'onSuccess callback must be a function';
@@ -231,6 +232,20 @@
         }
         var url = udsHostName.clone().setPath('/case/' + caseId + "/associate");
         return executeUdsAjaxCallWithData(onSuccess, onFailure, url, jsonAssociates,'POST');
+    };
+
+    uds.getCQIQuestions = function (onSuccess, onFailure, caseNumber) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + '/reviews/questions');
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
+
+    uds.postCQIScore = function (onSuccess, onFailure, caseNumber,reviewData) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + '/reviews');
+        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,reviewData,'POST');
     };
 
     return uds;
