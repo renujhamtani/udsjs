@@ -248,5 +248,26 @@
         return executeUdsAjaxCallWithData(onSuccess,onFailure,url,reviewData,'POST');
     };
 
+    uds.getSolutionDetails = function (onSuccess, onFailure, solutionNumber) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber);
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
+
+    uds.getSQIQuestions = function (onSuccess, onFailure, solutionNumber) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber + '/reviews/questions');
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
+
+    uds.postSQIScore = function (onSuccess, onFailure, solutionNumber,reviewData) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber + '/reviews');
+        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,reviewData,'POST');
+    };
+
     return uds;
 }));
