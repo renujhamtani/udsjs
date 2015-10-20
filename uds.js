@@ -194,6 +194,14 @@
         var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public");
         return executeUdsAjaxCallWithData(onSuccess,onFailure,url,caseComment,'POST');
     };
+
+    uds.postPublicCommentsWithHours = function (onSuccess, onFailure, caseNumber, caseComment, hoursWorked) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public/hoursWorked/"+hoursWorked);
+        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,caseComment,'POST');
+    };
+
     uds.postPrivateComments = function (onSuccess, onFailure, caseNumber,caseComment) {
         if (!$.isFunction(onSuccess)) {
             throw 'onSuccess callback must be a function';
