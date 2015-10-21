@@ -188,20 +188,29 @@
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
 
-    uds.postPublicComments = function (onSuccess, onFailure, caseNumber,caseComment) {
+    uds.postPublicComments = function (onSuccess, onFailure, caseNumber,caseComment,hoursWorked) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public");
+        if(hoursWorked===undefined){
+            var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public");
+        } else {
+            var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public/hoursWorked/"+hoursWorked);
+        }
         return executeUdsAjaxCallWithData(onSuccess,onFailure,url,caseComment,'POST');
     };
-    uds.postPrivateComments = function (onSuccess, onFailure, caseNumber,caseComment) {
+
+    uds.postPrivateComments = function (onSuccess, onFailure, caseNumber,caseComment,hoursWorked) {
         if (!$.isFunction(onSuccess)) {
             throw 'onSuccess callback must be a function';
         }
         if (!$.isFunction(onFailure)) {
             throw 'onFailure callback must be a function';
         }
-        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private");
+        if(hoursWorked===undefined){
+            var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private");
+        } else {
+            var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private/hoursWorked/"+hoursWorked);
+        }
         return executeUdsAjaxCallWithData(onSuccess, onFailure, url, caseComment,'POST');
     };
 
