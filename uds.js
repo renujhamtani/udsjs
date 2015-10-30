@@ -153,10 +153,13 @@
         var url =udsHostName.clone().setPath('/user/')+ssoUsername;
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
-    uds.fetchUser = function (onSuccess, onFailure, userUql) {
+    uds.fetchUser = function (onSuccess, onFailure, userUql, resourceProjection) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
         var url =udsHostName.clone().setPath('/user').addQueryParam('where', userUql);
+        if (resourceProjection != null) {
+            url.addQueryParam('resourceProjection', resourceProjection);
+        }
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
     uds.fetchCases = function (onSuccess, onFailure, uql, resourceProjection, limit, sortOption, statusOnly) {
@@ -276,6 +279,20 @@
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
         var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber + '/reviews');
         return executeUdsAjaxCallWithData(onSuccess,onFailure,url,reviewData,'POST');
+    };
+
+    uds.getSbrList = function (onSuccess, onFailure) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/user/metadata/sbrs?resourceProjection=Full&where=sbrName like "%25"');
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
+
+    uds.getSbrDetails = function (onSuccess, onFailure,sbrName) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=(sbrName is "'+sbrName+'" or roleSbrName is"'+sbrName+'" )');
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
 
     return uds;
