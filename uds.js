@@ -98,6 +98,7 @@
     };
 
     uds.fetchAccountDetails = function (accountNumber, resourceProjection) {
+
         var url =udsHostName.clone().setPath('/account/' + accountNumber);
         if (resourceProjection != null) {
             url.addQueryParam('resourceProjection', resourceProjection);
@@ -166,6 +167,31 @@
     uds.addAssociates = function (caseId,jsonAssociates) {
         var url = udsHostName.clone().setPath('/case/' + caseId + "/associate");
         return executeUdsAjaxCallWithData(url, jsonAssociates,'POST');
+    };
+
+    uds.getCQIQuestions = function (caseNumber) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + '/reviews/questions');
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    uds.postCQIScore = function (caseNumber,reviewData) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + '/reviews');
+        return executeUdsAjaxCallWithData(url,reviewData,'POST');
+    };
+
+    uds.getSolutionDetails = function (solutionNumber) {
+        var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber);
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    uds.getSQIQuestions = function ( solutionNumber) {
+        var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber + '/reviews/questions');
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    uds.postSQIScore = function ( solutionNumber,reviewData) {
+        var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber + '/reviews');
+        return executeUdsAjaxCallWithData(url,reviewData,'POST');
     };
 
     return uds;
