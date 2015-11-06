@@ -13,7 +13,7 @@
     'use strict';
 
     var uds = {};
-
+    
     var udsHostName = new Uri('https://unified-ds-qa.gsslab.pnq2.redhat.com/');
 
     if (window.location.hostname !== 'access.redhat.com' && window.location.hostname !== 'prod.foo.redhat.com') {
@@ -47,18 +47,17 @@
 
     var executeUdsAjaxCall=function(url,httpMethod)
     {
-        var promise=  Promise.resolve($.ajax($.extend({}, baseAjaxParams,{
+        var promise=Promise.resolve($.ajax($.extend({}, baseAjaxParams,{
             url: url,
             type: httpMethod,
             method: httpMethod
         })));
-
         return promise;
     };
 
     var executeUdsAjaxCallWithData=function(url,data,httpMethod)
     {
-        var promise=  Promise.resolve($.ajax($.extend({}, baseAjaxParams,{
+        var promise=Promise.resolve($.ajax($.extend({}, baseAjaxParams,{
             url: url,
             data: JSON.stringify(data),
             contentType: 'application/json',
@@ -66,7 +65,6 @@
             method: httpMethod,
             dataType: ''
         })));
-
         return promise;
     };
 
@@ -189,12 +187,20 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.postSQIScore = function ( solutionNumber,reviewData) {
+    uds.postSQIScore = function (solutionNumber,reviewData) {
         var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber + '/reviews');
         return executeUdsAjaxCallWithData(url,reviewData,'POST');
     };
-    
-    
 
+    uds.getSbrList = function () {
+        var url = udsHostName.clone().setPath('/user/metadata/sbrs?resourceProjection=Full&where=sbrName like "%25"');
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    uds.getSbrDetails = function (sbrName) {
+        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=(sbrName is "'+sbrName+'" or roleSbrName is"'+sbrName+'" )');
+        return executeUdsAjaxCall(url,'GET');
+    };
+    
     return uds;
 }));
