@@ -281,10 +281,12 @@
         return executeUdsAjaxCallWithData(onSuccess,onFailure,url,reviewData,'POST');
     };
 
-    uds.getSbrList = function (onSuccess, onFailure) {
+    uds.getSbrList = function (onSuccess, onFailure,resourceProjection,query) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        var url = udsHostName.clone().setPath('/user/metadata/sbrs?resourceProjection=Full&where=sbrName like "%25"');
+        var url = udsHostName.clone().setPath('/user/metadata/sbrs');
+        url.addQueryParam('resourceProjection',resourceProjection);
+        url.addQueryParam('where',encodeURIComponent(query));
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
 
@@ -293,6 +295,63 @@
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
         var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=(sbrName is "'+sbrName+'" or roleSbrName is"'+sbrName+'" )');
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
+
+    uds.removeUserSbr = function (onSuccess, onFailure,userId,query) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/user/'+userId+'/sbr').addQueryParam('where', query);
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'DELETE');
+    };
+
+
+    uds.getRoleList = function (onSuccess, onFailure, query) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/user/metadata/roles');
+        url.addQueryParam('where',encodeURIComponent(query));
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
+
+    uds.getRoleDetails = function (onSuccess, onFailure,parentRoleId,roleName) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=((parentRoleId is '+parentRoleId+') or (roleName is"'+roleName+'" ))');
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
+
+    uds.getRoleParentDetails = function (onSuccess, onFailure,parentUserId,parentRoleId,roleName) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=((parentRoleId is '+parentRoleId+' and roleParentUserId is "'+parentUserId+'") or (roleName is"'+roleName+'" and roleUserId is "'+parentUserId+'"))');
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+    };
+
+    uds.removeUserRole = function (onSuccess, onFailure,userId,query) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        var url = udsHostName.clone().setPath('/user/'+userId+'/role').addQueryParam('where', query);
+        return executeUdsAjaxCall(onSuccess,onFailure,url,'DELETE');
+    };
+
+    uds.postAddUsersToSBR = function (onSuccess, onFailure, userId, uql, data) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        if (uql == null||uql == undefined||uql === '') {
+            throw 'User Query is mandatory';
+        }
+        var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', uql);
+        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,data,'POST');
+    };
+
+    uds.postAddUsersToRole = function (onSuccess, onFailure, userId, uql, data) {
+        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
+        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+        if (uql == null||uql == undefined||uql === '') {
+            throw 'User Query is mandatory';
+        }
+        var url = udsHostName.clone().setPath('/user/' + userId + '/role').addQueryParam('where', uql);
+        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,data,'POST');
     };
 
     return uds;
