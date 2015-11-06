@@ -290,13 +290,6 @@
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
 
-    uds.getSbrDetails = function (onSuccess, onFailure,sbrName) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=(sbrName is "'+sbrName+'" or roleSbrName is"'+sbrName+'" )');
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
-    };
-
     uds.removeUserSbr = function (onSuccess, onFailure,userId,query) {
         if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
@@ -310,20 +303,6 @@
         if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
         var url = udsHostName.clone().setPath('/user/metadata/roles');
         url.addQueryParam('where',encodeURIComponent(query));
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
-    };
-
-    uds.getRoleDetails = function (onSuccess, onFailure,parentRoleId,roleName) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=((parentRoleId is '+parentRoleId+') or (roleName is"'+roleName+'" ))');
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
-    };
-
-    uds.getRoleParentDetails = function (onSuccess, onFailure,parentUserId,parentRoleId,roleName) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=((parentRoleId is '+parentRoleId+' and roleParentUserId is "'+parentUserId+'") or (roleName is"'+roleName+'" and roleUserId is "'+parentUserId+'"))');
         return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
     };
 
