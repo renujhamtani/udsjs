@@ -144,12 +144,21 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.postPublicComments = function (caseNumber,caseComment) {
-        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public");
+    uds.postPublicComments = function (caseNumber,caseComment,hoursWorked) {
+        if(hoursWorked===undefined){
+            var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public");
+        } else {
+            var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public/hoursWorked/"+hoursWorked);
+        }
         return executeUdsAjaxCallWithData(url,caseComment,'POST');
     };
-    uds.postPrivateComments = function (caseNumber,caseComment) {
+    uds.postPrivateComments = function (caseNumber,caseComment,hoursWorked) {
         var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private");
+        if(hoursWorked===undefined){
+            var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private");
+        } else {
+            var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private/hoursWorked/"+hoursWorked);
+        }
         return executeUdsAjaxCallWithData( url, caseComment,'POST');
     };
     uds.updateCaseDetails = function( caseNumber,caseDetails){
@@ -192,15 +201,51 @@
         return executeUdsAjaxCallWithData(url,reviewData,'POST');
     };
 
-    uds.getSbrList = function () {
-        var url = udsHostName.clone().setPath('/user/metadata/sbrs?resourceProjection=Full&where=sbrName like "%25"');
+    
+    uds.getSbrList = function (resourceProjection,query) {
+        var url = udsHostName.clone().setPath('/user/metadata/sbrs');
+        url.addQueryParam('resourceProjection',resourceProjection);
+        url.addQueryParam('where',encodeURIComponent(query));
         return executeUdsAjaxCall(url,'GET');
     };
 
     uds.getSbrDetails = function (sbrName) {
-        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=(sbrName is "'+sbrName+'" or roleSbrName is"'+sbrName+'" )');
-        return executeUdsAjaxCall(url,'GET');
+        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=(sbrName is "' + sbrName + '" or roleSbrName is"' + sbrName + '" )');
+        return executeUdsAjaxCall(url, 'GET');
+    }
+        
+    uds.removeUserSbr = function (userId, query) {
+        var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', query);
+        return executeUdsAjaxCall(url, 'DELETE');
     };
-    
+
+
+    uds.getRoleList = function (query) {
+        var url = udsHostName.clone().setPath('/user/metadata/roles');
+        url.addQueryParam('where', encodeURIComponent(query));
+        return executeUdsAjaxCall( url, 'GET');
+    };
+
+    uds.removeUserRole = function (userId, query) {
+        var url = udsHostName.clone().setPath('/user/' + userId + '/role').addQueryParam('where', query);
+        return executeUdsAjaxCall(url, 'DELETE');
+    };
+
+    uds.postAddUsersToSBR = function ( userId, uql, data) {
+        if (uql == null || uql == undefined || uql === '') {
+            throw 'User Query is mandatory';
+        }
+        var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', uql);
+        return executeUdsAjaxCallWithData(url, data, 'POST');
+    };
+
+    uds.postAddUsersToRole = function ( userId, uql, data) {
+        if (uql == null || uql == undefined || uql === '') {
+            throw 'User Query is mandatory';
+        }
+        var url = udsHostName.clone().setPath('/user/' + userId + '/role').addQueryParam('where', uql);
+            return executeUdsAjaxCallWithData(url, data, 'POST');
+    };
     return uds;
+
 }));
