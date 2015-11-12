@@ -209,11 +209,7 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.getSbrDetails = function (sbrName) {
-        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=(sbrName is "' + sbrName + '" or roleSbrName is"' + sbrName + '" )');
-        return executeUdsAjaxCall(url, 'GET');
-    }
-        
+
     uds.removeUserSbr = function (userId, query) {
         var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', query);
         return executeUdsAjaxCall(url, 'DELETE');
