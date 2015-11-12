@@ -5,15 +5,15 @@
 (function (root, factory) {
     'use strict';
     if (typeof define === 'function' && define.amd) {
-        define('uds', ['jquery', 'jsUri'], factory);
+        define('uds', ['jquery', 'jsUri','bluebird'], factory);
     } else {
-        root.uds = factory(root.$, root.Uri);
+        root.uds = factory(root.$, root.Uri,root.Promise);
     }
-}(this, function ($, Uri) {
+}(this, function ($, Uri,Promise) {
     'use strict';
 
     var uds = {};
-
+    
     var udsHostName = new Uri('https://unified-ds-qa.gsslab.pnq2.redhat.com/');
 
     if (window.location.hostname !== 'access.redhat.com' && window.location.hostname !== 'prod.foo.redhat.com') {
@@ -45,126 +45,81 @@
         dataType: ''
     };
 
-    var executeUdsAjaxCall=function(onSuccess,onFailure,url,httpMethod)
+    var executeUdsAjaxCall=function(url,httpMethod)
     {
-        var defer = $.Deferred();
-        var promise=$.ajax($.extend({}, baseAjaxParams,{
+        var promise=Promise.resolve($.ajax($.extend({}, baseAjaxParams,{
             url: url,
             type: httpMethod,
             method: httpMethod
-        }));
-        promise.done(function(response) {
-            if (response !== undefined) {
-                onSuccess(response);
-            } else {
-                onSuccess([]); //not sure whether every call would need the response to be typecasted to []
-            }
-        });
-        promise.fail(function(xhr, response, status) {
-            onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);//not sure of this error for everything
-        });
-        return defer.promise;
+        })));
+        return promise;
     };
 
-    var executeUdsAjaxCallWithData=function(onSuccess,onFailure,url,data,httpMethod)
+    var executeUdsAjaxCallWithData=function(url,data,httpMethod)
     {
-        var defer = $.Deferred();
-        var promise=$.ajax($.extend({}, baseAjaxParams,{
+        var promise=Promise.resolve($.ajax($.extend({}, baseAjaxParams,{
             url: url,
             data: JSON.stringify(data),
             contentType: 'application/json',
             type: httpMethod,
             method: httpMethod,
             dataType: ''
-        }));
-        promise.done(function(response) {
-            if (response !== undefined) {
-                onSuccess(response);
-            } else {
-                onSuccess([]);
-            }
-        });
-        promise.fail(function(xhr, response, status) {
-            onFailure('Error ' + xhr.status + ' ' + xhr.statusText, xhr, response, status);
-        });
-        return defer.promise;
+        })));
+        return promise;
     };
 
 
-    uds.fetchCaseDetails = function (onSuccess, onFailure,caseNumber) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.fetchCaseDetails = function (caseNumber) {
         var url =udsHostName.clone().setPath('/case/' + caseNumber);
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
-
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.fetchCaseComments = function (onSuccess, onFailure, caseNumber) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.fetchCaseComments = function ( caseNumber) {
         var url =udsHostName.clone().setPath('/case/' + caseNumber + "/comments");
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.fetchCaseAssociateDetails = function (onSuccess, onFailure, userId,roleName) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.fetchCaseAssociateDetails = function (userId,roleName) {
         var url =udsHostName.clone().setPath('/case/associates?where=roleName is "'+roleName+'" and userId is "'+userId+'"');
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
     //hold the lock on the case
-    uds.getlock = function (onSuccess, onFailure, caseNumber) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.getlock = function (caseNumber) {
         var url =udsHostName.clone().setPath('/case/' + caseNumber + "/lock");
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
     //release the lock on the case
-    uds.releaselock = function (onSuccess, onFailure, caseNumber) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.releaselock = function (caseNumber) {
         var url =udsHostName.clone().setPath('/case/' + caseNumber + "/lock");
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'DELETE');
+        return executeUdsAjaxCall(url,'DELETE');
     };
 
-    uds.fetchAccountDetails = function (onSuccess, onFailure,accountNumber, resourceProjection) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.fetchAccountDetails = function (accountNumber, resourceProjection) {
+
         var url =udsHostName.clone().setPath('/account/' + accountNumber);
         if (resourceProjection != null) {
             url.addQueryParam('resourceProjection', resourceProjection);
         } else {
             url.addQueryParam('resourceProjection', 'Minimal');
         }
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.fetchAccountNotes = function (onSuccess, onFailure,accountNumber) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.fetchAccountNotes = function (accountNumber) {
         var url =udsHostName.clone().setPath('/account/' + accountNumber+'/notes');
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.fetchUserDetails = function (onSuccess, onFailure, ssoUsername) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.fetchUserDetails = function (ssoUsername) {
         var url =udsHostName.clone().setPath('/user/')+ssoUsername;
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
-    uds.fetchUser = function (onSuccess, onFailure, userUql, resourceProjection) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.fetchUser = function (userUql) {
         var url =udsHostName.clone().setPath('/user').addQueryParam('where', userUql);
-        if (resourceProjection != null) {
-            url.addQueryParam('resourceProjection', resourceProjection);
-        }
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
-    uds.fetchCases = function (onSuccess, onFailure, uql, resourceProjection, limit, sortOption, statusOnly) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.fetchCases = function (uql, resourceProjection, limit, sortOption, statusOnly) {
         var path = '/case'
         if(statusOnly){
             path = '/case/list-status-only'
@@ -181,157 +136,116 @@
         if(sortOption != null){
             url.addQueryParam('orderBy',sortOption);
         }
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.generateBomgarSessionKey=function(onSuccess, onFailure, caseId) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.generateBomgarSessionKey=function( caseId) {
         var url =udsHostName.clone().setPath('/case/' + caseId + '/remote-session-key');
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.postPublicComments = function (onSuccess, onFailure, caseNumber,caseComment,hoursWorked) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.postPublicComments = function (caseNumber,caseComment,hoursWorked) {
         if(hoursWorked===undefined){
             var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public");
         } else {
             var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/public/hoursWorked/"+hoursWorked);
         }
-        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,caseComment,'POST');
+        return executeUdsAjaxCallWithData(url,caseComment,'POST');
     };
-
-    uds.postPrivateComments = function (onSuccess, onFailure, caseNumber,caseComment,hoursWorked) {
-        if (!$.isFunction(onSuccess)) {
-            throw 'onSuccess callback must be a function';
-        }
-        if (!$.isFunction(onFailure)) {
-            throw 'onFailure callback must be a function';
-        }
+    uds.postPrivateComments = function (caseNumber,caseComment,hoursWorked) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private");
         if(hoursWorked===undefined){
             var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private");
         } else {
             var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/private/hoursWorked/"+hoursWorked);
         }
-        return executeUdsAjaxCallWithData(onSuccess, onFailure, url, caseComment,'POST');
+        return executeUdsAjaxCallWithData( url, caseComment,'POST');
     };
-
-    uds.updateCaseDetails = function(onSuccess, onFailure, caseNumber,caseDetails){
-        if (!$.isFunction(onSuccess)) {
-            throw 'onSuccess callback must be a function';
-        }
-        if (!$.isFunction(onFailure)) {
-            throw 'onFailure callback must be a function';
-        }
+    uds.updateCaseDetails = function( caseNumber,caseDetails){
         var url = udsHostName.clone().setPath('/case/' + caseNumber);
-        return executeUdsAjaxCallWithData(onSuccess, onFailure, url, caseDetails,'PUT');
+        return executeUdsAjaxCallWithData(url, caseDetails,'PUT');
     };
 
-    uds.fetchCaseHistory = function (onSuccess, onFailure, caseNumber) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.fetchCaseHistory = function ( caseNumber) {
         var url = udsHostName.clone().setPath('/case/' + caseNumber + "/history");
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.addAssociates = function (onSuccess, onFailure, caseId,jsonAssociates) {
-        if (!$.isFunction(onSuccess)) {
-            throw 'onSuccess callback must be a function';
-        }
-        if (!$.isFunction(onFailure)) {
-            throw 'onFailure callback must be a function';
-        }
+    uds.addAssociates = function (caseId,jsonAssociates) {
         var url = udsHostName.clone().setPath('/case/' + caseId + "/associate");
-        return executeUdsAjaxCallWithData(onSuccess, onFailure, url, jsonAssociates,'POST');
+        return executeUdsAjaxCallWithData(url, jsonAssociates,'POST');
     };
 
-    uds.getCQIQuestions = function (onSuccess, onFailure, caseNumber) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.getCQIQuestions = function (caseNumber) {
         var url = udsHostName.clone().setPath('/case/' + caseNumber + '/reviews/questions');
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.postCQIScore = function (onSuccess, onFailure, caseNumber,reviewData) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.postCQIScore = function (caseNumber,reviewData) {
         var url = udsHostName.clone().setPath('/case/' + caseNumber + '/reviews');
-        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,reviewData,'POST');
+        return executeUdsAjaxCallWithData(url,reviewData,'POST');
     };
 
-    uds.getSolutionDetails = function (onSuccess, onFailure, solutionNumber) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.getSolutionDetails = function (solutionNumber) {
         var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber);
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.getSQIQuestions = function (onSuccess, onFailure, solutionNumber) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.getSQIQuestions = function ( solutionNumber) {
         var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber + '/reviews/questions');
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.postSQIScore = function (onSuccess, onFailure, solutionNumber,reviewData) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.postSQIScore = function (solutionNumber,reviewData) {
         var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber + '/reviews');
-        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,reviewData,'POST');
+        return executeUdsAjaxCallWithData(url,reviewData,'POST');
     };
 
-    uds.getSbrList = function (onSuccess, onFailure,resourceProjection,query) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    
+    uds.getSbrList = function (resourceProjection,query) {
         var url = udsHostName.clone().setPath('/user/metadata/sbrs');
         url.addQueryParam('resourceProjection',resourceProjection);
         url.addQueryParam('where',encodeURIComponent(query));
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.removeUserSbr = function (onSuccess, onFailure,userId,query) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        var url = udsHostName.clone().setPath('/user/'+userId+'/sbr').addQueryParam('where', query);
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'DELETE');
+    uds.getSbrDetails = function (sbrName) {
+        var url = udsHostName.clone().setPath('/user?resourceProjection=Full&where=(sbrName is "' + sbrName + '" or roleSbrName is"' + sbrName + '" )');
+        return executeUdsAjaxCall(url, 'GET');
+    }
+        
+    uds.removeUserSbr = function (userId, query) {
+        var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', query);
+        return executeUdsAjaxCall(url, 'DELETE');
     };
 
 
-    uds.getRoleList = function (onSuccess, onFailure, query) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
+    uds.getRoleList = function (query) {
         var url = udsHostName.clone().setPath('/user/metadata/roles');
-        url.addQueryParam('where',encodeURIComponent(query));
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'GET');
+        url.addQueryParam('where', encodeURIComponent(query));
+        return executeUdsAjaxCall( url, 'GET');
     };
 
-    uds.removeUserRole = function (onSuccess, onFailure,userId,query) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        var url = udsHostName.clone().setPath('/user/'+userId+'/role').addQueryParam('where', query);
-        return executeUdsAjaxCall(onSuccess,onFailure,url,'DELETE');
+    uds.removeUserRole = function (userId, query) {
+        var url = udsHostName.clone().setPath('/user/' + userId + '/role').addQueryParam('where', query);
+        return executeUdsAjaxCall(url, 'DELETE');
     };
 
-    uds.postAddUsersToSBR = function (onSuccess, onFailure, userId, uql, data) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        if (uql == null||uql == undefined||uql === '') {
+    uds.postAddUsersToSBR = function ( userId, uql, data) {
+        if (uql == null || uql == undefined || uql === '') {
             throw 'User Query is mandatory';
         }
         var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', uql);
-        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,data,'POST');
+        return executeUdsAjaxCallWithData(url, data, 'POST');
     };
 
-    uds.postAddUsersToRole = function (onSuccess, onFailure, userId, uql, data) {
-        if (!$.isFunction(onSuccess)) { throw 'onSuccess callback must be a function'; }
-        if (!$.isFunction(onFailure)) { throw 'onFailure callback must be a function'; }
-        if (uql == null||uql == undefined||uql === '') {
+    uds.postAddUsersToRole = function ( userId, uql, data) {
+        if (uql == null || uql == undefined || uql === '') {
             throw 'User Query is mandatory';
         }
         var url = udsHostName.clone().setPath('/user/' + userId + '/role').addQueryParam('where', uql);
-        return executeUdsAjaxCallWithData(onSuccess,onFailure,url,data,'POST');
+            return executeUdsAjaxCallWithData(url, data, 'POST');
     };
-
     return uds;
+
 }));
