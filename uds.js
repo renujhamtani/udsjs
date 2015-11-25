@@ -13,7 +13,7 @@
     'use strict';
 
     var uds = {};
-    
+
     var udsHostName = new Uri('https://unified-ds-qa.gsslab.pnq2.redhat.com/');
 
     if (window.location.hostname !== 'access.redhat.com' && window.location.hostname !== 'prod.foo.redhat.com') {
@@ -201,7 +201,7 @@
         return executeUdsAjaxCallWithData(url,reviewData,'POST');
     };
 
-    
+
     uds.getSbrList = function (resourceProjection,query) {
         var url = udsHostName.clone().setPath('/user/metadata/sbrs');
         url.addQueryParam('resourceProjection',resourceProjection);
@@ -242,6 +242,13 @@
         var url = udsHostName.clone().setPath('/user/' + userId + '/role').addQueryParam('where', uql);
             return executeUdsAjaxCallWithData(url, data, 'POST');
     };
-    return uds;
 
+    uds.getOpenCasesForAccount = function (uql) {
+        var path = '/case';
+        var url =udsHostName.clone().setPath(path).addQueryParam('where', encodeURIComponent(uql));
+        url.addQueryParam('resourceProjection', 'Minimal');
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    return uds;
 }));
