@@ -209,6 +209,10 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.fetchCaseSbrs = function () {
+        var url =udsHostName.clone().setPath('/case/sbrs');
+        return executeUdsAjaxCall(url,'GET');
+    };
 
     uds.removeUserSbr = function (userId, query) {
         var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', query);
