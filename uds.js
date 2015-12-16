@@ -214,6 +214,11 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.pinSolutionToCase = function( caseNumber,solutionJson){
+        var url = udsHostName.clone().setPath('/case/' + caseNumber);
+        return executeUdsAjaxCallWithData(url, solutionJson ,'PUT');
+    };
+
     uds.removeUserSbr = function (userId, query) {
         var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', query);
         return executeUdsAjaxCall(url, 'DELETE');
