@@ -259,5 +259,11 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.getQuestionDependencies = function () {
+        var path = '/case/ktquestions';
+        var url =udsHostName.clone().setPath(path);
+        return executeUdsAjaxCall(url,'GET');
+    };
+
     return uds;
 }));
