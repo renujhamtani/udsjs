@@ -265,5 +265,10 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.postRoleLevel = function(userId,roleName,roleLevel) {
+        var url = udsHostName.clone().setPath('/user/' + userId + "/role-level/"+roleName);
+        return executeUdsAjaxCallWithData( url, roleLevel,'PUT');
+    };
+
     return uds;
 }));
