@@ -259,5 +259,10 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.getCallLogsForCase = function (caseNumber) {
+        var url =udsHostName.clone().setPath('/case/' + caseNumber + "/calls");
+        return executeUdsAjaxCall(url,'GET');
+    };
+
     return uds;
 }));
