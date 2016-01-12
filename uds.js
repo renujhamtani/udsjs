@@ -259,6 +259,11 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.getCallLogsForCase = function (caseNumber) {
+        var url =udsHostName.clone().setPath('/case/' + caseNumber + "/calls");
+        return executeUdsAjaxCall(url,'GET');
+    };
+
     uds.getQuestionDependencies = function () {
         var path = '/case/ktquestions';
         var url =udsHostName.clone().setPath(path);
