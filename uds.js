@@ -274,6 +274,10 @@
         var url = udsHostName.clone().setPath('/user/' + userId + "/role-level/"+roleName);
         return executeUdsAjaxCallWithData( url, roleLevel,'PUT');
     };
-
+    
+    uds.postEditPrivateComments = function (caseNumber,caseComment,caseCommentId) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/"+ caseCommentId+"/private?draft=true");
+        return executeUdsAjaxCallWithData(url,caseComment,'PUT');
+    };
     return uds;
 }));
