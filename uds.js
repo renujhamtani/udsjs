@@ -275,5 +275,20 @@
         return executeUdsAjaxCallWithData( url, roleLevel,'PUT');
     };
 
+    uds.createCaseNep = function(caseNumber, nep) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/nep");
+        return executeUdsAjaxCallWithData( url, nep,'POST');
+    };
+
+    uds.updateCaseNep = function(caseNumber, nep) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/nep");
+        return executeUdsAjaxCallWithData( url, nep,'PUT');
+    };
+
+    uds.removeCaseNep = function(caseNumber) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/nep");
+        return executeUdsAjaxCall( url ,'DELETE');
+    };
+
     return uds;
 }));
