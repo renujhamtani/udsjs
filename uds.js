@@ -290,5 +290,10 @@
         return executeUdsAjaxCall( url ,'DELETE');
     };
 
+    uds.getAvgCSATForAccount = function(uql) {
+        var url = udsHostName.clone().setPath('/metrics/CsatAccountAvg').addQueryParam('where', encodeURIComponent(uql));
+        return executeUdsAjaxCall(url,'GET');
+    };
+
     return uds;
 }));
