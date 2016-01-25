@@ -14,10 +14,23 @@
 
     var uds = {};
 
-    var udsHostName = new Uri('https://unified-ds-qa.gsslab.pnq2.redhat.com/');
+    var udsHostName = new Uri('https://unified-ds-ci.gsslab.brq.redhat.com/');
 
-    if (window.location.hostname !== 'access.redhat.com' && window.location.hostname !== 'prod.foo.redhat.com') {
-        udsHostName = new Uri('https://unified-ds-ci.gsslab.brq.redhat.com/');
+
+    if (window.location.hostname === 'access.redhat.com' || window.location.hostname === 'prod.foo.redhat.com' || window.location.hostname === 'fooprod.redhat.com'){
+        udsHostName = new Uri('https://unified-ds.gsslab.rdu2.redhat.com/');
+    }
+    else
+    {
+      if (window.location.hostname === 'access.qa.redhat.com' || window.location.hostname === 'qa.foo.redhat.com' || window.location.hostname === 'fooqa.redhat.com') {
+          udsHostName = new Uri('https://unified-ds-qa.gsslab.pnq2.redhat.com/');
+      }
+      else
+      {
+         if (window.location.hostname === 'access.devgssci.devlab.phx1.redhat.com' || window.location.hostname === 'ci.foo.redhat.com' || window.location.hostname === 'fooci.redhat.com') {
+                udsHostName = new Uri('https://unified-ds-ci.gsslab.brq.redhat.com/');
+         }
+      }
     }
 
     if(localStorage && localStorage.getItem('udsHostname')) {
