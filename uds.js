@@ -308,5 +308,15 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.getCaseContactsForAccount = function(accountNumber){
+        var url = udsHostName.clone().setPath('/account/' + accountNumber + "/contacts");
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    uds.getCaseGroupsForContact = function(contactSSO){
+        var url = udsHostName.clone().setPath('/case/casegroups/user/' + contactSSO);
+        return executeUdsAjaxCall(url,'GET');
+    };
+
     return uds;
 }));
