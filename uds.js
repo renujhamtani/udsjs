@@ -318,5 +318,10 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.getRMECountForAccount = function(uql){
+        var url = udsHostName.clone().setPath('/case/history').addQueryParam('where', encodeURIComponent(uql));
+        return executeUdsAjaxCall(url,'GET');
+    };
+
     return uds;
 }));
