@@ -92,9 +92,9 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.fetchCaseAssociateDetails = function (userId,roleName,internalStatus,externalStatus) {
-         var url =udsHostName.clone().setPath('/case/associates?where=roleName is "'+roleName+'" and (userId is "'+userId+'" and (caseInternalStatus is "'+internalStatus+'" and caseStatus ne "'+externalStatus+'"))');
-         return executeUdsAjaxCall(url,'GET');
+    uds.fetchCaseAssociateDetails = function (uql) {
+            var url =udsHostName.clone().setPath('/case/associates').addQueryParam('where', encodeURIComponent(uql));
+            return executeUdsAjaxCall(url,'GET');
     };
 
     //hold the lock on the case
