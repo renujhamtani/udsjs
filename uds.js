@@ -323,5 +323,15 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.deleteAssociates = function(caseId,associateId){
+        var url = udsHostName.clone().setPath('/case/' + caseId + '/associate/' + associateId);
+        return executeUdsAjaxCall(url,'DELETE');
+    };
+
+    uds.updateCaseAssociate = function(caseId,jsonAssociates){
+        var url = udsHostName.clone().setPath('/case/' + caseId + "/associate");
+        return executeUdsAjaxCallWithData(url, jsonAssociates,'PUT');
+    };
+
     return uds;
 }));
