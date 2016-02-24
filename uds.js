@@ -199,8 +199,9 @@
         return executeUdsAjaxCallWithData(url,reviewData,'POST');
     };
 
-    uds.getSolutionDetails = function (solutionNumber) {
+    uds.getSolutionDetails = function (solutionNumber, resourceProjection) {
         var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber);
+        if(resourceProjection !== undefined) {url.addQueryParam('resourceProjection', resourceProjection);}
         return executeUdsAjaxCall(url,'GET');
     };
 
