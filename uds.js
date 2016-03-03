@@ -14,10 +14,23 @@
 
     var uds = {};
 
-    var udsHostName = new Uri('https://unified-ds-qa.gsslab.pnq2.redhat.com/');
+    var udsHostName = new Uri('https://unified-ds-ci.gsslab.brq.redhat.com/');
 
-    if (window.location.hostname !== 'access.redhat.com' && window.location.hostname !== 'prod.foo.redhat.com') {
-        udsHostName = new Uri('https://unified-ds-ci.gsslab.brq.redhat.com/');
+
+    if (window.location.hostname === 'access.redhat.com' || window.location.hostname === 'prod.foo.redhat.com' || window.location.hostname === 'fooprod.redhat.com'){
+        udsHostName = new Uri('https://unified-ds.gsslab.rdu2.redhat.com/');
+    }
+    else
+    {
+      if (window.location.hostname === 'access.qa.redhat.com' || window.location.hostname === 'qa.foo.redhat.com' || window.location.hostname === 'fooqa.redhat.com') {
+          udsHostName = new Uri('https://unified-ds-qa.gsslab.pnq2.redhat.com/');
+      }
+      else
+      {
+         if (window.location.hostname === 'access.devgssci.devlab.phx1.redhat.com' || window.location.hostname === 'ci.foo.redhat.com' || window.location.hostname === 'fooci.redhat.com') {
+                udsHostName = new Uri('https://unified-ds-ci.gsslab.brq.redhat.com/');
+         }
+      }
     }
 
     if(localStorage && localStorage.getItem('udsHostname')) {
@@ -79,9 +92,9 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
-    uds.fetchCaseAssociateDetails = function (userId,roleName) {
-        var url =udsHostName.clone().setPath('/case/associates?where=roleName is "'+roleName+'" and userId is "'+userId+'"');
-        return executeUdsAjaxCall(url,'GET');
+    uds.fetchCaseAssociateDetails = function (uql) {
+            var url =udsHostName.clone().setPath('/case/associates').addQueryParam('where', encodeURIComponent(uql));
+            return executeUdsAjaxCall(url,'GET');
     };
 
     //hold the lock on the case
@@ -186,8 +199,9 @@
         return executeUdsAjaxCallWithData(url,reviewData,'POST');
     };
 
-    uds.getSolutionDetails = function (solutionNumber) {
+    uds.getSolutionDetails = function (solutionNumber, resourceProjection) {
         var url = udsHostName.clone().setPath('/documentation/solution/' + solutionNumber);
+        if(resourceProjection !== undefined) {url.addQueryParam('resourceProjection', resourceProjection);}
         return executeUdsAjaxCall(url,'GET');
     };
 
@@ -275,9 +289,56 @@
         return executeUdsAjaxCallWithData( url, roleLevel,'PUT');
     };
     
-    uds.postEditPrivateComments = function (caseNumber,caseComment,caseCommentId) {
-        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/"+ caseCommentId+"/private?draft=true");
+    uds.postEditPrivateComments = function (caseNumber,caseComment,caseCommentId,draft) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/"+ caseCommentId+"/private");
+        url.addQueryParam('draft', draft);
         return executeUdsAjaxCallWithData(url,caseComment,'PUT');
     };
+
+    uds.createCaseNep = function(caseNumber, nep) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/nep");
+        return executeUdsAjaxCallWithData( url, nep,'POST');
+    };
+
+    uds.updateCaseNep = function(caseNumber, nep) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/nep");
+        return executeUdsAjaxCallWithData( url, nep,'PUT');
+    };
+
+    uds.removeCaseNep = function(caseNumber) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/nep");
+        return executeUdsAjaxCall( url ,'DELETE');
+    };
+
+    uds.getAvgCSATForAccount = function(uql) {
+        var url = udsHostName.clone().setPath('/metrics/CsatAccountAvg').addQueryParam('where', encodeURIComponent(uql));
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    uds.getCaseContactsForAccount = function(accountNumber){
+        var url = udsHostName.clone().setPath('/account/' + accountNumber + "/contacts");
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    uds.getCaseGroupsForContact = function(contactSSO){
+        var url = udsHostName.clone().setPath('/case/casegroups/user/' + contactSSO);
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    uds.getRMECountForAccount = function(uql){
+        var url = udsHostName.clone().setPath('/case/history').addQueryParam('where', encodeURIComponent(uql));
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    uds.deleteAssociates = function(caseId,associateId){
+        var url = udsHostName.clone().setPath('/case/' + caseId + '/associate/' + associateId);
+        return executeUdsAjaxCall(url,'DELETE');
+    };
+
+    uds.updateCaseAssociate = function(caseId,jsonAssociates){
+        var url = udsHostName.clone().setPath('/case/' + caseId + "/associate");
+        return executeUdsAjaxCallWithData(url, jsonAssociates,'PUT');
+    };
+
     return uds;
 }));
