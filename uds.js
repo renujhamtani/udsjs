@@ -288,6 +288,12 @@
         var url = udsHostName.clone().setPath('/user/' + userId + "/role-level/"+roleName);
         return executeUdsAjaxCallWithData( url, roleLevel,'PUT');
     };
+    
+    uds.postEditPrivateComments = function (caseNumber,caseComment,caseCommentId,draft) {
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/comments/"+ caseCommentId+"/private");
+        url.addQueryParam('draft', draft);
+        return executeUdsAjaxCallWithData(url,caseComment,'PUT');
+    };
 
     uds.createCaseNep = function(caseNumber, nep) {
         var url = udsHostName.clone().setPath('/case/' + caseNumber + "/nep");
