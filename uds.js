@@ -340,5 +340,11 @@
         return executeUdsAjaxCallWithData(url, jsonAssociates,'PUT');
     };
 
+    uds.fetchSolutionDetails = function(solutionIdQuery){
+        var url = udsHostName.clone().setPath('/documentation/solution').addQueryParam('where', encodeURIComponent(solutionIdQuery));
+        url.addQueryParam('resourceProjection', 'Minimal');
+        return executeUdsAjaxCall(url,'GET');
+    };
+
     return uds;
 }));
