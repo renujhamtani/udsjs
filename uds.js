@@ -351,5 +351,27 @@
         return executeUdsAjaxCallWithData(url, handlingSystemArray,'PUT');
     };
 
+    uds.fetchSolr = function function_name(query) {
+      if(query.q === undefined || query.q === null || query.q === '') throw 'SOLR Query is mandatory';
+
+      var url = udsHostName.clone().setPath('/solr');
+      url.addQueryParam('wt', 'json');
+      url.addQueryParam('q', query.q);
+      if(query.fq !== undefined && query.fq !== '') {
+        url.addQueryParam('fq', query.fq);
+      }
+      if(query.start !== undefined) {
+        url.addQueryParam('start', query.start);
+      }
+      if(query.rows !== undefined) {
+        url.addQueryParam('rows', query.rows);
+      }
+      if(query.sort !== undefined && query.sort !== '') {
+        url.addQueryParam('sort', query.sort);
+      }
+
+      return executeUdsAjaxCall(url, 'GET');
+    }
+
     return uds;
 }));
