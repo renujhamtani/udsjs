@@ -346,5 +346,10 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.setHandlingSystem = function(caseNumber,handlingSystemArray){
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/handlingsystems");
+        return executeUdsAjaxCallWithData(url, handlingSystemArray,'PUT');
+    };
+
     return uds;
 }));
