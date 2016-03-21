@@ -371,7 +371,7 @@
       }
 
       return executeUdsAjaxCall(url, 'GET');
-    }
+    };
 
     return uds;
 }));
