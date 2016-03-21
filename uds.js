@@ -371,7 +371,17 @@
       }
 
       return executeUdsAjaxCall(url, 'GET');
-    }
+    };
+
+    uds.addCaseSbrs = function(caseNumber,sbrArray){
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/sbrs");
+        return executeUdsAjaxCallWithData(url, sbrArray,'PUT');
+    };
+
+    uds.removeCaseSbrs = function(caseNumber,sbrArray){
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/sbrs");
+        return executeUdsAjaxCallWithData(url, sbrArray,'DELETE');
+    };
 
     return uds;
 }));
