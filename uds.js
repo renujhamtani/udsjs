@@ -346,6 +346,11 @@
         return executeUdsAjaxCall(url,'GET');
     };
 
+    uds.setHandlingSystem = function(caseNumber,handlingSystemArray){
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/handlingsystems");
+        return executeUdsAjaxCallWithData(url, handlingSystemArray,'PUT');
+    };
+
     uds.fetchSolr = function function_name(query) {
       if(query.q === undefined || query.q === null || query.q === '') throw 'SOLR Query is mandatory';
 
@@ -366,7 +371,7 @@
       }
 
       return executeUdsAjaxCall(url, 'GET');
-    }
+    };
 
     return uds;
 }));
