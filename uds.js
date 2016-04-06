@@ -383,5 +383,26 @@
         return executeUdsAjaxCallWithData(url, sbrArray,'DELETE');
     };
 
+    uds.getAllRolesList = function(query){
+        var url = udsHostName.clone().setPath('/user/metadata/roles/query');
+        url.addQueryParam('where', encodeURIComponent(query));
+        return executeUdsAjaxCall( url, 'GET');
+    };
+
+    uds.createRole = function(roleDetails){
+        var url = udsHostName.clone().setPath('/user/metadata/roles/add');
+        return executeUdsAjaxCallWithData(url, roleDetails,'POST');
+    };
+
+    uds.updateRole = function(roleId,rolePayload){
+        var url = udsHostName.clone().setPath('/user/metadata/roles/'+roleId);
+        return executeUdsAjaxCallWithData(url, rolePayload,'PUT');
+    };
+
+    uds.deleteRole = function(roleId){
+        var url = udsHostName.clone().setPath('/user/metadata/roles/'+roleId);
+        return executeUdsAjaxCall(url,'DELETE');
+    };
+
     return uds;
 }));
