@@ -404,5 +404,20 @@
         return executeUdsAjaxCall(url,'DELETE');
     };
 
+    uds.getAdditionalContacts = function(caseNumber){
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/contacts");
+        return executeUdsAjaxCall(url,'GET');
+    };
+
+    uds.removeAdditionalContacts = function(caseNumber,contacts){
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/contacts");
+        return executeUdsAjaxCallWithData(url,contacts,'DELETE');
+    };
+
+    uds.addAdditionalContacts = function(caseNumber,contacts){
+        var url = udsHostName.clone().setPath('/case/' + caseNumber + "/contacts");
+        return executeUdsAjaxCallWithData(url,contacts,'PUT');
+    };
+
     return uds;
 }));
