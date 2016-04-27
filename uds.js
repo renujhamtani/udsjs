@@ -419,5 +419,15 @@
         return executeUdsAjaxCallWithData(url,contacts,'PUT');
     };
 
+    uds.fetchBrmsSolrQuery = function(jsonObject){
+        var url = udsHostName.clone().setPath('/brms');
+        return executeUdsAjaxCallWithData(url, jsonObject,'POST');
+    };
+
+    uds.fetchTopCasesFromSolr = function(queryString){
+        var url = udsHostName.clone().setPath('/solr?'+queryString);
+        return executeUdsAjaxCall(url,'GET');
+    };
+
     return uds;
 }));
