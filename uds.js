@@ -128,8 +128,11 @@
         var url =udsHostName.clone().setPath('/user/')+ssoUsername;
         return executeUdsAjaxCall(url,'GET');
     };
-    uds.fetchUser = function (userUql) {
+    uds.fetchUser = function (userUql, resourceProjection) {
         var url =udsHostName.clone().setPath('/user').addQueryParam('where', userUql);
+        if(resourceProjection != null) {
+            url.addQueryParam('resourceProjection', resourceProjection);
+        }
         return executeUdsAjaxCall(url,'GET');
     };
     uds.fetchCases = function (uql, resourceProjection, limit, sortOption, statusOnly) {
