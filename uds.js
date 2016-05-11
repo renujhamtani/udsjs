@@ -248,6 +248,11 @@
         return executeUdsAjaxCall( url, 'GET');
     };
 
+    uds.getRoleDetails = function (roleId) {
+        var url = udsHostName.clone().setPath('/user/metadata/roles/'+roleId);
+        return executeUdsAjaxCall( url, 'GET');
+    };
+
     uds.removeUserRole = function (userId, query) {
         var url = udsHostName.clone().setPath('/user/' + userId + '/role').addQueryParam('where', query);
         return executeUdsAjaxCall(url, 'DELETE');
