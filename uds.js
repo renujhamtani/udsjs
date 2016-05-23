@@ -34,7 +34,7 @@
                {
                   if (window.location.hostname === 'access.stage.redhat.com' || window.location.hostname === 'stage.foo.redhat.com' || window.location.hostname === 'foostage.redhat.com') {
                          udsHostName = new Uri('https://unified-ds-stage.gsslab.pnq2.redhat.com/');
-                     }
+                  }
                }
       }
     }
