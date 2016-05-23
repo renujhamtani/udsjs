@@ -30,6 +30,12 @@
          if (window.location.hostname === 'access.devgssci.devlab.phx1.redhat.com' || window.location.hostname === 'ci.foo.redhat.com' || window.location.hostname === 'fooci.redhat.com') {
                 udsHostName = new Uri('https://unified-ds-ci.gsslab.brq.redhat.com/');
          }
+         else
+               {
+                  if (window.location.hostname === 'access.stage.redhat.com' || window.location.hostname === 'stage.foo.redhat.com' || window.location.hostname === 'foostage.redhat.com') {
+                         udsHostName = new Uri('https://unified-ds-stage.gsslab.pnq2.redhat.com/');
+                     }
+               }
       }
     }
 
