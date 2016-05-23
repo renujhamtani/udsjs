@@ -135,14 +135,14 @@
         return executeUdsAjaxCall(url,'GET');
     };
     uds.fetchUser = function (userUql, resourceProjection) {
-        var url =udsHostName.clone().setPath('/user').addQueryParam('where', userUql);
+        var url =udsHostName.clone().setPath('/user').addQueryParam('where', encodeURIComponent(userUql));
         if(resourceProjection != null) {
             url.addQueryParam('resourceProjection', resourceProjection);
         }
         return executeUdsAjaxCall(url,'GET');
     };
     uds.fetchCases = function (uql, resourceProjection, limit, sortOption, statusOnly) {
-        var path = '/case'
+        var path = '/case';
         if(statusOnly){
             path = '/case/list-status-only'
         }
@@ -243,7 +243,7 @@
     };
 
     uds.removeUserSbr = function (userId, query) {
-        var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', query);
+        var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', encodeURIComponent(query));
         return executeUdsAjaxCall(url, 'DELETE');
     };
 
@@ -268,7 +268,7 @@
         if (uql == null || uql == undefined || uql === '') {
             throw 'User Query is mandatory';
         }
-        var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', uql);
+        var url = udsHostName.clone().setPath('/user/' + userId + '/sbr').addQueryParam('where', encodeURIComponent(uql));
         return executeUdsAjaxCallWithData(url, data, 'POST');
     };
 
